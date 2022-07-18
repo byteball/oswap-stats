@@ -6,10 +6,10 @@ import Obyte from "@/obyte";
 import Pool from "@/helpers/PoolHelper";
 import { ITickers } from "@/interfaces/tickers.interface";
 import Menu from "@/components/Menu.vue";
-import Footer from "@/components/Footer.vue";
 import AssetIcon from "@/components/AssetIcon.vue";
 import useWindowSize from "@/composables/useWindowSize";
 //import fetchAPY7Days from "@/api/fetchAPY7Days";
+
 import {
   TableState,
   TableStateFilters,
@@ -28,6 +28,7 @@ store.dispatch("initIfNotInit", Client);
 
 const exchangeRates = computed(() => store.state.exchangeRates);
 const poolsData = computed(() => store.state.poolsData);
+const miningApy: ComputedRef<any> = computed(() => store.state.miningApy);
 const tickers: ComputedRef<ITickers> = computed(() => store.state.tickers);
 const isReady = computed(() => store.state.ready);
 const isMobile = computed(() => windowSize.x.value < 576);
@@ -135,7 +136,7 @@ const mobileColumns = computed(() => {
   ];
 });
 
-const data = computed(() => {
+const data = computed(() => {  
   return poolsData.value.pools.map((pool: Pool) => {
     const TVL = Number(pool.marketcap.toFixed(2));
     const TVLString = formatNumbers(TVL);
@@ -147,9 +148,11 @@ const data = computed(() => {
       pool.address
     );
     const volumeString = formatNumbers(volume);
-    
+
     const xTicker = pool.getTicker(pool.x_asset, poolsData.value.assets);
     const yTicker = pool.getTicker(pool.y_asset, poolsData.value.assets);
+
+    const poolMiningApy = miningApy.value.data[pool.ticker] || null;
 
     return {
       key: pool.address,
@@ -158,11 +161,14 @@ const data = computed(() => {
         fee: pool.swapFee * 100,
         address: pool.address,
         xTicker,
-        yTicker
+        yTicker,
       },
       TVL,
       TVLString,
-      APY: apy7d.value[pool.address].apy || 0,
+      APY: {
+        apy7d: apy7d.value[pool.address].apy || 0,
+        poolMiningApy,
+      },
       volume,
       volumeString,
     };
@@ -171,6 +177,8 @@ const data = computed(() => {
 
 const mobileData = computed(() => {
   return poolsData.value.pools.map((pool: Pool) => {
+    const poolMiningApy = miningApy.value.data[pool.ticker] || null;
+
     return {
       key: pool.ticker,
       pool: {
@@ -178,7 +186,10 @@ const mobileData = computed(() => {
         fee: pool.swapFee * 100,
         address: pool.address,
       },
-      APY: apy7d.value[pool.address].apy || 0,
+      APY: {
+        apy7d: apy7d.value[pool.address].apy || 0,
+        poolMiningApy,
+      },
       TVL: Number(pool.marketcap.toFixed(2)),
     };
   });
@@ -247,10 +258,20 @@ const handleChange = (
           <a-tag class="fee" style="margin-left: 8px">{{ objPool.fee }}%</a-tag>
         </template>
         <template #TVL="{ text }">${{ text }}</template>
-        <template #APY="{ text }">{{ text }}%</template>
+        <template #APY="{ text }">
+        <div v-if="text.poolMiningApy !== null">
+          {{ text.apy7d }}%
+          <div class="mining-pool">+{{ text.poolMiningApy }} 
+            <a-tooltip>
+            <template #title>Liquidity mining rewards from <a href="https://liquidity.obyte.org" target="_blank">liquidity.obyte.org</a></template>
+            <InfoCircleOutlined />
+          </a-tooltip>
+          </div>
+        </div>
+        <div v-else>{{ text.apy7d }}%</div>        
+        </template>
         <template #volume="{ text }">${{ text }}</template>
       </a-table>
-      <Footer :isHome="true" />
     </div>
   </div>
 </template>
@@ -270,7 +291,9 @@ const handleChange = (
 .fee {
   display: inline-block;
 }
-
+.mining-pool {
+  font-size: 11px; 
+}
 @media screen and (max-width: 600px) {
   .fee {
     display: none !important;
