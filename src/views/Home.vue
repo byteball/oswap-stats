@@ -261,7 +261,7 @@ const handleChange = (
         <template #APY="{ text }">
         <div v-if="text.poolMiningApy !== null">
           {{ text.apy7d }}%
-          <div class="mining-pool">+{{ text.poolMiningApy }} 
+          <div class="mining-pool">+{{ text.poolMiningApy }}% 
             <a-tooltip>
             <template #title>Liquidity mining rewards from <a href="https://liquidity.obyte.org" target="_blank">liquidity.obyte.org</a></template>
             <InfoCircleOutlined />
