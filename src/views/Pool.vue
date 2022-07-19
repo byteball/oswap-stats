@@ -422,6 +422,34 @@ const columns = computed(() => {
       title: "Type",
       dataIndex: "type",
       key: "type",
+      filters: [
+        {
+          text: 'Add',
+          value: 'Add',
+        },
+        {
+          text: 'Remove',
+          value: 'Remove',
+        },
+        {
+          text: `Swap ${quoteSymbol} to ${baseSymbol}`,
+          value: `Swap ${quoteSymbol} to ${baseSymbol}`,
+        },
+        {
+          text: `Swap ${baseSymbol} to ${quoteSymbol}`,
+          value: `Swap ${baseSymbol} to ${quoteSymbol}`,
+        },
+        {
+          text: `Buy ${baseSymbol}`,
+          value: `Buy ${baseSymbol}`,
+        },
+        {
+          text: `Sell ${baseSymbol}`,
+          value: `Sell ${baseSymbol}`,
+        },
+      ],
+      filterMultiple: false,
+      onFilter: (value: any, record: any) => record.type.indexOf(value) === 0,
       slots: { customRender: "type" },
     },
     {
