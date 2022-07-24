@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, ref, watch, onMounted, Ref, onUnmounted } from "vue";
+import {computed, inject, ref, watch, onMounted, Ref, onUnmounted, ComputedRef} from "vue";
 import { useStore } from "vuex";
 import { useRoute } from "vue-router";
 import { createChart } from "lightweight-charts";
@@ -18,7 +18,6 @@ import useWindowSize from "@/composables/useWindowSize";
 import { addZero } from "@/helpers/date.helper";
 
 import { InfoCircleOutlined } from "@ant-design/icons-vue";
-import Footer from "@/components/Footer.vue";
 
 const Client = inject("Obyte") as Obyte.Client;
 const store = useStore();
@@ -40,6 +39,7 @@ const isReady = computed(() => store.state.ready);
 const poolsData = computed(() => store.state.poolsData);
 const tickers = computed(() => store.state.tickers);
 const apy7d = computed(() => store.state.apy7d);
+const miningApy = computed(() => store.state.miningApy);
 const isMobile = computed(() => windowSize.x.value < 576);
 const pool: Ref<Pool> = ref({} as Pool);
 const candles: Ref<ICandles[]> = ref([]);
@@ -681,8 +681,14 @@ onUnmounted(() => {
                 <InfoCircleOutlined />
               </a-tooltip>
             </div>
-            <div class="contentInBlock">
-              {{ apy7d[pool.address].apy }}%
+            <div style="flex-direction: column" class="contentInBlock">
+              <div> {{ apy7d[pool.address].apy }}% </div>
+              <div v-if="miningApy.data[pool.ticker]" class="mining-pool">+{{ miningApy.data[pool.ticker] }}%
+                <a-tooltip>
+                  <template #title>Liquidity mining rewards from <a href="https://liquidity.obyte.org" target="_blank">liquidity.obyte.org</a></template>
+                  <InfoCircleOutlined />
+                </a-tooltip>
+              </div>
             </div>
             <div style="text-align: center" v-if="apyDetailsShown">
               <div class="subTitleInBlock">7-day earnings</div>
@@ -780,7 +786,6 @@ onUnmounted(() => {
           </span>
         </template>
       </a-table>
-      <Footer />
     </div>
   </div>
 </template>
@@ -840,6 +845,9 @@ onUnmounted(() => {
 
 .table {
   padding: 0 8px;
+}
+.mining-pool {
+  font-size: 11px;
 }
 @media screen and (max-width: 600px) {
   .fee {
