@@ -681,9 +681,9 @@ onUnmounted(() => {
                 <InfoCircleOutlined />
               </a-tooltip>
             </div>
-            <div style="flex-direction: column" class="contentInBlock">
+            <div class="contentInBlock">
               <div> {{ apy7d[pool.address].apy }}% </div>
-              <div v-if="miningApy.data[pool.ticker]" class="mining-pool">+{{ miningApy.data[pool.ticker] }}%
+              <div v-if="miningApy.data[pool.ticker]" class="mining-pool-apy">+{{ miningApy.data[pool.ticker] }}%
                 <a-tooltip>
                   <template #title>Liquidity mining rewards from <a href="https://liquidity.obyte.org" target="_blank">liquidity.obyte.org</a></template>
                   <InfoCircleOutlined />
@@ -846,8 +846,10 @@ onUnmounted(() => {
 .table {
   padding: 0 8px;
 }
-.mining-pool {
+.mining-pool-apy {
+  padding-left: 8px;
   font-size: 11px;
+  align-items: flex-end;
 }
 @media screen and (max-width: 600px) {
   .fee {
