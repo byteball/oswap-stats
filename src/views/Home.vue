@@ -136,7 +136,7 @@ const mobileColumns = computed(() => {
   ];
 });
 
-const data = computed(() => {  
+const data = computed(() => {
   return poolsData.value.pools.map((pool: Pool) => {
     const TVL = Number(pool.marketcap.toFixed(2));
     const TVLString = formatNumbers(TVL);
@@ -259,16 +259,16 @@ const handleChange = (
         </template>
         <template #TVL="{ text }">${{ text }}</template>
         <template #APY="{ text }">
-        <div v-if="text.poolMiningApy !== null">
-          {{ text.apy7d }}%
-          <div class="mining-pool">+{{ text.poolMiningApy }}% 
+        <div v-if="text.poolMiningApy !== null" class="apy-block">
+          <div>{{ text.apy7d }}%</div>
+          <div class="mining-pool-apy">+{{ text.poolMiningApy }}%
             <a-tooltip>
             <template #title>Liquidity mining rewards from <a href="https://liquidity.obyte.org" target="_blank">liquidity.obyte.org</a></template>
             <InfoCircleOutlined />
           </a-tooltip>
           </div>
         </div>
-        <div v-else>{{ text.apy7d }}%</div>        
+        <div v-else>{{ text.apy7d }}%</div>
         </template>
         <template #volume="{ text }">${{ text }}</template>
       </a-table>
@@ -291,8 +291,16 @@ const handleChange = (
 .fee {
   display: inline-block;
 }
-.mining-pool {
-  font-size: 11px; 
+
+.apy-block {
+  display: flex;
+  align-content: center;
+  align-items: center;
+}
+
+.mining-pool-apy {
+  padding-left: 8px;
+  font-size: 11px;
 }
 @media screen and (max-width: 600px) {
   .fee {
