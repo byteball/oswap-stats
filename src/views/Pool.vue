@@ -710,9 +710,10 @@ onUnmounted(() => {
         <a-col :xs="24" :sm="24" :md="18">
           <div
             style="
-              margin: 16px 8px;
+              margin: 16px 8px 20px;
               background-color: #1c2024;
               border-radius: 8px;
+              padding-bottom: 1px;
             "
           >
             <div style="padding: 16px">
