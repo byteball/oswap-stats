@@ -116,13 +116,12 @@ const mobileColumns = computed(() => {
       slots: { customRender: "pool" },
     },
     {
-      title: "TVL",
-      dataIndex: "TVL",
+      dataIndex: "TVLString",
       key: "tvl",
       sortDirections: ["descend"],
       sorter: (a: any, b: any) => a.TVLString - b.TVLString,
       sortOrder: key === "tvl" && "descend",
-      slots: { customRender: "TVL" },
+      slots: { title: "tvl-title", customRender: "TVL" },
     },
     {
       title: "APY",
@@ -179,18 +178,27 @@ const mobileData = computed(() => {
   return poolsData.value.pools.map((pool: Pool) => {
     const poolMiningApy = miningApy.value.data[pool.ticker] || null;
 
+    const TVL = Number(pool.marketcap.toFixed(2));
+    const TVLString = formatNumbers(TVL);
+
+    const xTicker = pool.getTicker(pool.x_asset, poolsData.value.assets);
+    const yTicker = pool.getTicker(pool.y_asset, poolsData.value.assets);
+
     return {
       key: pool.ticker,
       pool: {
         name: pool.ticker,
         fee: pool.swapFee * 100,
         address: pool.address,
+        xTicker,
+        yTicker,
       },
       APY: {
         apy7d: apy7d.value[pool.address].apy || 0,
         poolMiningApy,
       },
-      TVL: Number(pool.marketcap.toFixed(2)),
+      TVL,
+      TVLString
     };
   });
 });
@@ -299,12 +307,22 @@ const handleChange = (
 }
 
 .mining-pool-apy {
+  display: inline-block;
   padding-left: 8px;
   font-size: 11px;
 }
 @media screen and (max-width: 600px) {
   .fee {
     display: none !important;
+  }
+  .apy-block {
+    flex-direction: column;
+  }
+  .mining-pool-apy {
+    font-size: 11px;
+  }
+  .ant-table-tbody > tr > td {
+    padding: 8px 8px !important;
   }
 }
 </style>

@@ -17,7 +17,7 @@ import AssetIcon from "@/components/AssetIcon.vue";
 import useWindowSize from "@/composables/useWindowSize";
 import { addZero } from "@/helpers/date.helper";
 
-import { InfoCircleOutlined } from "@ant-design/icons-vue";
+import { InfoCircleOutlined, FilterOutlined } from "@ant-design/icons-vue";
 
 const Client = inject("Obyte") as Obyte.Client;
 const store = useStore();
@@ -55,6 +55,7 @@ const basePricesForChat = ref([]) as Ref<IForChart[]>;
 const quotePricesForChat = ref([]) as Ref<IForChart[]>;
 const currentChart = ref(1);
 const apyDetailsShown = ref(false);
+const filteredInfo = ref();
 
 let mousePosition = { x: 0, y: 0 };
 
@@ -400,21 +401,54 @@ function setChart(): void {
   c.value.timeScale().fitContent();
 }
 
-const columns = computed(() => {
-  let ready = 1;
-  let baseSymbol = "";
-  let quoteSymbol = "";
-  if (!pool.value.history?.length) {
-    ready = 0;
-  } else {
-    baseSymbol = pool.value.getSymbol(
+
+const symbols = computed(() => {
+  const baseSymbol = pool.value.getSymbol(
       pool.value.x_asset,
       poolsData.value.assets
-    );
-    quoteSymbol = pool.value.getSymbol(
+  );
+  const quoteSymbol = pool.value.getSymbol(
       pool.value.y_asset,
       poolsData.value.assets
-    );
+  );
+  return {
+    baseSymbol,
+    quoteSymbol,
+  }
+})
+
+
+const handleTableChange = (pagination: any, filters: any) => {
+  console.error('FILTERS', filters);
+  
+  filteredInfo.value = filters;
+};
+
+const currentFilter = ref('all');
+const resetFilter = () => {
+  currentFilter.value = 'all';
+  filteredInfo.value = null;
+};
+const filterByAddRemove = () => {
+  currentFilter.value = 'add_remove';
+  filteredInfo.value = { type: ['Remove', 'Add'] };
+};
+const filterBySwap = () => {
+  currentFilter.value = 'swap';
+  filteredInfo.value = { type: [`Swap ${symbols.value.quoteSymbol} to ${symbols.value.baseSymbol}`, `Swap ${symbols.value.baseSymbol} to ${symbols.value.quoteSymbol}`] };
+};
+const filterByLeverage = () => {
+  currentFilter.value = 'leverage';
+  filteredInfo.value = { type: [`Buy ${symbols.value.baseSymbol}`, `Sell ${symbols.value.baseSymbol}`] };
+};
+
+const columns = computed(() => {
+  let ready = 1;
+
+  const filtered = filteredInfo.value || {};
+  
+  if (!pool.value.history?.length) {
+    ready = 0;
   }
 
   return [
@@ -422,43 +456,17 @@ const columns = computed(() => {
       title: "Type",
       dataIndex: "type",
       key: "type",
-      filters: [
-        {
-          text: 'Add',
-          value: 'Add',
-        },
-        {
-          text: 'Remove',
-          value: 'Remove',
-        },
-        {
-          text: `Swap ${quoteSymbol} to ${baseSymbol}`,
-          value: `Swap ${quoteSymbol} to ${baseSymbol}`,
-        },
-        {
-          text: `Swap ${baseSymbol} to ${quoteSymbol}`,
-          value: `Swap ${baseSymbol} to ${quoteSymbol}`,
-        },
-        {
-          text: `Buy ${baseSymbol}`,
-          value: `Buy ${baseSymbol}`,
-        },
-        {
-          text: `Sell ${baseSymbol}`,
-          value: `Sell ${baseSymbol}`,
-        },
-      ],
-      filterMultiple: false,
+      filteredValue: filtered.type || null,
       onFilter: (value: any, record: any) => record.type.indexOf(value) === 0,
       slots: { customRender: "type" },
     },
     {
-      title: ready ? `${baseSymbol} amount` : "Base Amount",
+      title: ready ? `${symbols.value.baseSymbol} amount` : "Base Amount",
       dataIndex: "baseAmount",
       key: "baseAmount",
     },
     {
-      title: ready ? `${quoteSymbol} amount` : "Quote Amount",
+      title: ready ? `${symbols.value.quoteSymbol} amount` : "Quote Amount",
       dataIndex: "quoteAmount",
       key: "quoteAmount",
     },
@@ -479,20 +487,11 @@ const columns = computed(() => {
 const data = computed(() => {
   if (!pool.value.history?.length) return [];
 
-  const baseSymbol = pool.value.getSymbol(
-    pool.value.x_asset,
-    poolsData.value.assets
-  );
-  const quoteSymbol = pool.value.getSymbol(
-    pool.value.y_asset,
-    poolsData.value.assets
-  );
-
   const typeMap: ITypeMap = {
     remove: "Remove",
     add: "Add",
-    buy: `Swap ${quoteSymbol} to ${baseSymbol}`,
-    sell: `Swap ${baseSymbol} to ${quoteSymbol}`,
+    buy: `Swap ${symbols.value.quoteSymbol} to ${symbols.value.baseSymbol}`,
+    sell: `Swap ${symbols.value.baseSymbol} to ${symbols.value.quoteSymbol}`,
   };
   return pool.value.history.map((item: IHistory) => {
     const bLeverage = item.type === 'buy_leverage' || item.type === 'sell_leverage';
@@ -523,8 +522,8 @@ const data = computed(() => {
       type,
       unit: item.trigger_unit,
       author: item.trigger_address,
-      base: baseSymbol,
-      quote: quoteSymbol,
+      base: symbols.value.baseSymbol,
+      quote: symbols.value.quoteSymbol,
       baseAmount: pool.value.assetValue(
         baseAmount,
         poolsData.value.assets[pool.value.x_asset]
@@ -761,12 +760,24 @@ onUnmounted(() => {
           </div>
         </a-col>
       </a-row>
+      <a-row style="color: #fff; margin-top: 24px">
+        <div class="filters-block">
+          <div class="filters-list">
+            <FilterOutlined :style="{fontSize: '20px', color: '#6a737d', verticalAlign: '-4px'}" />
+            <a-button type="link" @click="resetFilter" :class="{ activeFilter: currentFilter === 'all' }" class="filter-button">All</a-button>
+            <a-button type="link" @click="filterByAddRemove" :class="{ activeFilter: currentFilter === 'add_remove' }" class="filter-button">Add/Remove</a-button>
+            <a-button type="link" @click="filterBySwap" :class="{ activeFilter: currentFilter === 'swap' }" class="filter-button">Swap</a-button>
+            <a-button type="link" @click="filterByLeverage" :class="{ activeFilter: currentFilter === 'leverage' }" class="filter-button">Leverage</a-button>
+          </div>
+        </div>
+      </a-row>
       <a-table
         class="table"
         :dataSource="data"
         :columns="columns"
         :rowClassName="(record, index) => 'table-pointer'"
         :scroll="{ x: true }"
+        @change="handleTableChange"
       >
         <template #type="{ record }">
           <span>
@@ -812,6 +823,22 @@ onUnmounted(() => {
   padding: 18px 12px;
   border-radius: 8px;
   margin: 16px 8px 20px;
+}
+.filters-block {
+  padding: 16px 8px;
+}
+.filters-list {
+  background-color: #1c2024;
+  border-radius: 8px;
+  padding: 10px 20px;
+}
+.filter-button {
+  color: #6a737d !important;
+  font-size: 16px;
+  padding: 4px 0 4px 20px;
+}
+.activeFilter {
+  color: #fff !important;
 }
 
 .titleInBlock {
