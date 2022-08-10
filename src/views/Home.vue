@@ -151,7 +151,7 @@ const data = computed(() => {
     const xTicker = pool.getTicker(pool.x_asset, poolsData.value.assets);
     const yTicker = pool.getTicker(pool.y_asset, poolsData.value.assets);
 
-    const poolMiningApy = miningApy.value.data[pool.ticker] || null;
+    const poolMiningApy = miningApy.value.data[pool.address] || null;
 
     return {
       key: pool.address,
@@ -176,7 +176,7 @@ const data = computed(() => {
 
 const mobileData = computed(() => {
   return poolsData.value.pools.map((pool: Pool) => {
-    const poolMiningApy = miningApy.value.data[pool.ticker] || null;
+    const poolMiningApy = miningApy.value.data[pool.address] || null;
 
     const TVL = Number(pool.marketcap.toFixed(2));
     const TVLString = formatNumbers(TVL);

@@ -682,7 +682,7 @@ onUnmounted(() => {
             </div>
             <div class="contentInBlock">
               <div> {{ apy7d[pool.address].apy }}% </div>
-              <div v-if="miningApy.data[pool.ticker]" class="mining-pool-apy">+{{ miningApy.data[pool.ticker] }}%
+              <div v-if="miningApy.data[pool.address]" class="mining-pool-apy">+{{ miningApy.data[pool.address] }}%
                 <a-tooltip>
                   <template #title>Liquidity mining rewards from <a href="https://liquidity.obyte.org" target="_blank">liquidity.obyte.org</a></template>
                   <InfoCircleOutlined />
@@ -825,12 +825,13 @@ onUnmounted(() => {
   margin: 16px 8px 20px;
 }
 .filters-block {
-  padding: 16px 8px;
+  width: 100%;
+  padding: 0 8px;
 }
 .filters-list {
-  background-color: #1c2024;
-  border-radius: 8px;
+  background-color: #26292f;
   padding: 10px 20px;
+  border-bottom: 1px solid #1b1e23;
 }
 .filter-button {
   color: #6a737d !important;
