@@ -90,7 +90,12 @@ const columns = computed(() => {
       dataIndex: "APY",
       key: "APY",
       sortDirections: ["descend"],
-      sorter: (a: any, b: any) => a.APY - b.APY,
+      sorter: (a: any, b: any) => {
+        return (
+          (a.APY.apy7d + a.APY.poolMiningApy) -
+          (b.APY.apy7d + b.APY.poolMiningApy)
+        );
+      },
       sortOrder: key === "APY" && "descend",
       slots: { title: "apy-title", customRender: "APY" },
     },
@@ -128,7 +133,12 @@ const mobileColumns = computed(() => {
       dataIndex: "APY",
       key: "APY",
       sortDirections: ["descend"],
-      sorter: (a: any, b: any) => a.APY - b.APY,
+      sorter: (a: any, b: any) => {
+        return (
+          (a.APY.apy7d + a.APY.poolMiningApy) -
+          (b.APY.apy7d + b.APY.poolMiningApy)
+        );
+      },
       sortOrder: key === "APY" && "descend",
       slots: { customRender: "APY" },
     },
@@ -151,7 +161,7 @@ const data = computed(() => {
     const xTicker = pool.getTicker(pool.x_asset, poolsData.value.assets);
     const yTicker = pool.getTicker(pool.y_asset, poolsData.value.assets);
 
-    const poolMiningApy = miningApy.value.data[pool.address] || null;
+    const poolMiningApy = miningApy.value.data[pool.address] || 0;
 
     return {
       key: pool.address,
@@ -176,7 +186,7 @@ const data = computed(() => {
 
 const mobileData = computed(() => {
   return poolsData.value.pools.map((pool: Pool) => {
-    const poolMiningApy = miningApy.value.data[pool.address] || null;
+    const poolMiningApy = miningApy.value.data[pool.address] || 0;
 
     const TVL = Number(pool.marketcap.toFixed(2));
     const TVLString = formatNumbers(TVL);
@@ -267,7 +277,7 @@ const handleChange = (
         </template>
         <template #TVL="{ text }">${{ text }}</template>
         <template #APY="{ text }">
-        <div v-if="text.poolMiningApy !== null" class="apy-block">
+        <div v-if="text.poolMiningApy !== 0" class="apy-block">
           <div>{{ text.apy7d }}%</div>
           <div class="mining-pool-apy">+{{ text.poolMiningApy }}%
             <a-tooltip>
