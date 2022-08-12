@@ -417,30 +417,12 @@ const symbols = computed(() => {
   }
 })
 
-
-const handleTableChange = (pagination: any, filters: any) => {
-  console.error('FILTERS', filters);
-  
-  filteredInfo.value = filters;
-};
-
+const paginationPage = ref(1);
 const currentFilter = ref('all');
-const resetFilter = () => {
-  currentFilter.value = 'all';
-  filteredInfo.value = null;
-};
-const filterByAddRemove = () => {
-  currentFilter.value = 'add_remove';
-  filteredInfo.value = { type: ['Remove', 'Add'] };
-};
-const filterBySwap = () => {
-  currentFilter.value = 'swap';
-  filteredInfo.value = { type: [`Swap ${symbols.value.quoteSymbol} to ${symbols.value.baseSymbol}`, `Swap ${symbols.value.baseSymbol} to ${symbols.value.quoteSymbol}`] };
-};
-const filterByLeverage = () => {
-  currentFilter.value = 'leverage';
-  filteredInfo.value = { type: [`Buy ${symbols.value.baseSymbol}`, `Sell ${symbols.value.baseSymbol}`] };
-};
+const filterByCriteria = async (criteria?: string) => {
+  pool.value.history = await fetchAAHistory(pool.value.address, criteria);
+  currentFilter.value = criteria || 'all';
+}
 
 const columns = computed(() => {
   let ready = 1;
@@ -456,8 +438,6 @@ const columns = computed(() => {
       title: "Type",
       dataIndex: "type",
       key: "type",
-      filteredValue: filtered.type || null,
-      onFilter: (value: any, record: any) => record.type.indexOf(value) === 0,
       slots: { customRender: "type" },
     },
     {
@@ -764,10 +744,10 @@ onUnmounted(() => {
         <div class="filters-block">
           <div class="filters-list">
             <FilterOutlined :style="{fontSize: '20px', color: '#6a737d', verticalAlign: '-4px'}" />
-            <a-button type="link" @click="resetFilter" :class="{ activeFilter: currentFilter === 'all' }" class="filter-button">All</a-button>
-            <a-button type="link" @click="filterByAddRemove" :class="{ activeFilter: currentFilter === 'add_remove' }" class="filter-button">Add/Remove</a-button>
-            <a-button type="link" @click="filterBySwap" :class="{ activeFilter: currentFilter === 'swap' }" class="filter-button">Swap</a-button>
-            <a-button type="link" @click="filterByLeverage" :class="{ activeFilter: currentFilter === 'leverage' }" class="filter-button">Leverage</a-button>
+            <a-button type="link" @click="filterByCriteria()" :class="{ activeFilter: currentFilter === 'all' }" class="filter-button">All</a-button>
+            <a-button type="link" @click="filterByCriteria('swap')" :class="{ activeFilter: currentFilter === 'swap' }" class="filter-button">Swap</a-button>
+            <a-button type="link" @click="filterByCriteria('liquidity')" :class="{ activeFilter: currentFilter === 'liquidity' }" class="filter-button">Add/Remove</a-button>
+            <a-button type="link" @click="filterByCriteria('leverage')" :class="{ activeFilter: currentFilter === 'leverage' }" class="filter-button">Leverage</a-button>
           </div>
         </div>
       </a-row>
@@ -777,7 +757,7 @@ onUnmounted(() => {
         :columns="columns"
         :rowClassName="(record, index) => 'table-pointer'"
         :scroll="{ x: true }"
-        @change="handleTableChange"
+        :pagination="{ current: paginationPage }"
       >
         <template #type="{ record }">
           <span>
