@@ -418,16 +418,19 @@ const symbols = computed(() => {
 })
 
 const paginationPage = ref(1);
+const onPageChange = (page: number) => {
+  paginationPage.value = page;
+}
+
 const currentFilter = ref('all');
 const filterByCriteria = async (criteria?: string) => {
   pool.value.history = await fetchAAHistory(pool.value.address, criteria);
+  paginationPage.value = 1;
   currentFilter.value = criteria || 'all';
 }
 
 const columns = computed(() => {
   let ready = 1;
-
-  const filtered = filteredInfo.value || {};
   
   if (!pool.value.history?.length) {
     ready = 0;
@@ -757,7 +760,7 @@ onUnmounted(() => {
         :columns="columns"
         :rowClassName="(record, index) => 'table-pointer'"
         :scroll="{ x: true }"
-        :pagination="{ current: paginationPage }"
+        :pagination="{ current: paginationPage, onChange: (page) => onPageChange(page) }"
       >
         <template #type="{ record }">
           <span>
