@@ -286,7 +286,7 @@ const handleChange = (
           </a-tooltip>
           </div>
         </div>
-        <div v-else>{{ text.apy7d }}%</div>
+        <div v-else class="apy7d">{{ text.apy7d }}%</div>
         </template>
         <template #volume="{ text }">${{ text }}</template>
       </a-table>
@@ -321,6 +321,11 @@ const handleChange = (
   padding-left: 8px;
   font-size: 11px;
 }
+
+.apy7d {
+  text-align: left;
+}
+
 @media screen and (max-width: 600px) {
   .fee {
     display: none !important;
@@ -330,6 +335,9 @@ const handleChange = (
   }
   .mining-pool-apy {
     font-size: 11px;
+  }
+  .apy7d {
+    text-align: center;
   }
   .ant-table-tbody > tr > td {
     padding: 8px 8px !important;
