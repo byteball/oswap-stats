@@ -431,7 +431,7 @@ const filterByCriteria = async (criteria?: string) => {
 
 const columns = computed(() => {
   let ready = 1;
-  
+
   if (!pool.value.history?.length) {
     ready = 0;
   }
@@ -743,7 +743,7 @@ onUnmounted(() => {
           </div>
         </a-col>
       </a-row>
-      <a-row style="color: #fff; margin-top: 24px">
+      <a-row style="color: #fff">
         <div class="filters-block">
           <div class="filters-list">
             <FilterOutlined :style="{fontSize: '20px', color: '#6a737d', verticalAlign: '-4px'}" />
