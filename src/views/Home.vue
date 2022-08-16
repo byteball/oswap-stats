@@ -270,10 +270,12 @@ const handleChange = (
           </span>
         </template>
         <template #pool="{ text: objPool }">
-          <AssetIcon :symbol="objPool.xTicker" size="small" />
-          <AssetIcon :symbol="objPool.yTicker" size="small" />
-          {{ objPool.name }}
-          <a-tag class="fee" style="margin-left: 8px">{{ objPool.fee }}%</a-tag>
+          <router-link :to="'/pool/' + objPool.address" class="linkToPool">
+            <AssetIcon :symbol="objPool.xTicker" size="small" />
+            <AssetIcon :symbol="objPool.yTicker" size="small" />
+            {{ objPool.name }}
+            <a-tag class="fee" style="margin-left: 8px">{{ objPool.fee }}%</a-tag>
+          </router-link>
         </template>
         <template #TVL="{ text }">${{ text }}</template>
         <template #APY="{ text }">
@@ -295,6 +297,15 @@ const handleChange = (
 </template>
 
 <style>
+.linkToPool {
+  display: block;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.linkToPool:hover {
+  color: rgba(255, 255, 255, 0.85);
+}
+
 .table {
   border-radius: 8px;
 }
