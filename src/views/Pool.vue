@@ -629,7 +629,7 @@ onUnmounted(() => {
             }"
           >
             <a
-              :href="'https://oswap.io/#/add-liquidity/' + pool.address"
+              :href="'https://oswap.io/add-liquidity/' + pool.address"
               target="_blank"
             >
               <a-button
@@ -640,7 +640,7 @@ onUnmounted(() => {
               >
             </a>
             <a
-              :href="'https://oswap.io/#/swap/' + pool.address"
+              :href="'https://oswap.io/swap/' + pool.address"
               target="_blank"
             >
               <a-button
@@ -843,7 +843,7 @@ onUnmounted(() => {
           <span>
             <a
               target="_blank"
-              :href="`https://explorer.obyte.org/#${record.unit}`"
+              :href="`https://explorer.obyte.org/${record.unit}`"
               >{{ record.type }}</a
             >
           </span>
@@ -852,7 +852,7 @@ onUnmounted(() => {
           <span>
             <a
               target="_blank"
-              :href="`https://explorer.obyte.org/#${record.author}`"
+              :href="`https://explorer.obyte.org/address/${record.author}`"
               >{{ record.author }}</a
             >
           </span>
