@@ -1,5 +1,5 @@
 import axios from "axios";
-import { OSWAP_TOKEN_API } from "../../config";
+import { OSWAP_TOKEN_API } from "@/config";
 
 export interface IFarmingPool {
     asset: string;

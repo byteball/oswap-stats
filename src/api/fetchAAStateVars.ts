@@ -1,8 +1,8 @@
 import axios from "axios";
-import { HUB_HOST } from "../../config";
+import { HUB_HOST } from "@/config";
 import { parseAAState } from "@/helpers/AAHelpers";
 
-import { IState } from "@/interfaces/aa.interface";
+import type { IState } from "@/interfaces/aa.interface";
 
 interface IPayload {
   address: string;

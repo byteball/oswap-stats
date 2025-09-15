@@ -1,4 +1,4 @@
-import { Ref, onMounted, onUnmounted, reactive, toRefs } from "vue";
+import { type Ref, onMounted, onUnmounted, reactive, toRefs } from "vue";
 
 interface WindowSize {
   x: Ref<number>;

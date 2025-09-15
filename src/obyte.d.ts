@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { Ref } from "vue";
 
 export = Obyte;

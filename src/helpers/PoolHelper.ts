@@ -1,8 +1,8 @@
 import fetchAAInfo from "@/api/fetchAAInfo";
-import { IAssetsList, IAsset } from "@/interfaces/assets.interface";
-import { IDecimals } from "@/interfaces/decimals.interface";
-import { ITickers } from "@/interfaces/tickers.interface";
-import { IState } from "@/interfaces/aa.interface";
+import type { IAssetsList, IAsset } from "@/interfaces/assets.interface";
+import type { IDecimals } from "@/interfaces/decimals.interface";
+import type { ITickers } from "@/interfaces/tickers.interface";
+import type { IState } from "@/interfaces/aa.interface";
 import { getPoolState } from "oswap-v2-sdk";
 
 interface IExchangeRates {

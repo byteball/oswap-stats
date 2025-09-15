@@ -1,6 +1,6 @@
-import { Ref } from "vue";
-import { ICandles } from "@/interfaces/candles.inerface";
-import { IExchangeRates } from "@/obyte";
+import type { Ref } from "vue";
+import type { ICandles } from "@/interfaces/candles.inerface";
+import type { IExchangeRates } from "@/obyte";
 
 export function getVolumeInUSDHelper(
   y_asset: string,

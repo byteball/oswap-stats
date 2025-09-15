@@ -1,6 +1,6 @@
 import fetchAAStateVars from "@/api/fetchAAStateVars";
 import fetchDefinition from "@/api/fetchDefinition";
-import { IState } from "@/interfaces/aa.interface";
+import type { IState } from "@/interfaces/aa.interface";
 
 export default async function fetchAAInfo(address: string): Promise<IState> {
   const stateVars = await fetchAAStateVars(address);

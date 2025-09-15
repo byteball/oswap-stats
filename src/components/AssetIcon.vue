@@ -1,43 +1,45 @@
-<script>
-import { ICON_CDN_URL } from "../../config";
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useMainStore } from '@/stores/main';
+import { ICON_CDN_URL } from "../config";
 import plug from "@/assets/plug.svg";
 
-export default {
-  props: {
-    symbol: String,
-    size: String
-  },
-  data() {
-    return {
-      formattedSymbol: '',
-      srcLink: '',
-      sizeClasses: {
-        small: 'icon-small',
-        medium: 'icon-medium'
-      }
-    }
-  },
-  methods: {
-    setAltImg(e) {
-      if (e.target.src !== plug) { 
-        e.target.src = plug;
-      }
-    }
-  },
-  created() {
-    const icons = this.$store.state.icons;
-    const cryptoIconsLink = 'https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.17.2/svg/color';
-    
-    this.formattedSymbol = this.symbol.replace(/[0-9]/g, '');
-    
-    if(icons.includes(this.symbol.toUpperCase())) {
-     this.srcLink = `${ICON_CDN_URL}/${this.symbol.toUpperCase()}-INV.svg`;
-     return;
-    }
-    
-    this.srcLink = `${cryptoIconsLink}/${this.formattedSymbol.toLowerCase()}.svg`
-  }
+interface Props {
+  symbol: string;
+  size: string;
 }
+
+const props = defineProps<Props>();
+const store = useMainStore();
+
+const formattedSymbol = ref('');
+const srcLink = ref('');
+
+const sizeClasses: Record<string, string> = {
+  small: 'icon-small',
+  medium: 'icon-medium'
+};
+
+const setAltImg = (e: Event) => {
+  const target = e.target as HTMLImageElement;
+  if (target.src !== plug) { 
+    target.src = plug;
+  }
+};
+
+onMounted(() => {
+  const icons = store.icons;
+  const cryptoIconsLink = 'https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.17.2/svg/color';
+  
+  formattedSymbol.value = props.symbol.replace(/[0-9]/g, '');
+  
+  if(icons.includes(props.symbol.toUpperCase())) {
+   srcLink.value = `${ICON_CDN_URL}/${props.symbol.toUpperCase()}-INV.svg`;
+   return;
+  }
+  
+  srcLink.value = `${cryptoIconsLink}/${formattedSymbol.value.toLowerCase()}.svg`;
+});
 </script>
 
 <template>
