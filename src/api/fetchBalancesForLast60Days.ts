@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_HOST } from "../../config";
+import { API_HOST } from "@/config";
 
 export default async function fetchBalancesForLast60Days(
   address: string

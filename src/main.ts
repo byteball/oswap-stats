@@ -1,9 +1,12 @@
 import { createApp } from "vue";
+import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "./router";
-import store from "./store";
 
 import Antd from "ant-design-vue";
 import "ant-design-vue/dist/antd.dark.css";
 
-createApp(App).use(Antd).use(store).use(router).mount("#app");
+const app = createApp(App);
+const pinia = createPinia();
+
+app.use(pinia).use(Antd).use(router).mount("#app");

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_HOST } from "../../config";
+import { API_HOST } from "@/config";
 
 interface IKV {
   [key: string]: number;

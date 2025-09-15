@@ -1,41 +1,39 @@
 <script setup lang="ts">
-import {inject, computed, ComputedRef, ref, onMounted, h, watch} from "vue";
-import { useStore } from "vuex";
+import { computed, type ComputedRef, ref, onMounted, h, watch} from "vue";
 import { useRouter, useRoute } from "vue-router";
+import { useMainStore } from "@/stores/main";
 import Pool from "@/helpers/PoolHelper";
-import { ITickers } from "@/interfaces/tickers.interface";
+import type { ITickers } from "@/interfaces/tickers.interface";
 import Menu from "@/components/Menu.vue";
 import AssetIcon from "@/components/AssetIcon.vue";
 import useWindowSize from "@/composables/useWindowSize";
 import setTitle from "@/helpers/setTitle";
 import PaginationForTable from "@/components/PaginationForTable.vue";
-//import fetchAPY7Days from "@/api/fetchAPY7Days";
 
-import {
+import type {
   TableState,
   TableStateFilters,
 } from "ant-design-vue/es/table/interface";
-import { IFarmingPool } from "@/api/fetchFarmingAPY";
-import { InfoCircleOutlined, SearchOutlined } from "@ant-design/icons-vue";
+import type { IFarmingPool } from "@/api/fetchFarmingAPY";
+import { InfoCircleOutlined } from "@ant-design/icons-vue";
 
 type Pagination = TableState["pagination"];
 
-const store = useStore();
+const store = useMainStore();
 const router = useRouter();
 const route = useRoute();
 const windowSize = useWindowSize();
-//const apy7d = ref({}) as any;
 
-store.dispatch("initIfNotInit");
+store.initIfNotInit();
 
-const exchangeRates = computed(() => store.state.exchangeRates);
-const poolsData = computed(() => store.state.poolsData);
-const miningApy: ComputedRef<any> = computed(() => store.state.miningApy);
-const tickers: ComputedRef<ITickers> = computed(() => store.state.tickers);
-const isReady = computed(() => store.state.ready);
+const exchangeRates = computed(() => store.exchangeRates);
+const poolsData = computed(() => store.poolsData);
+const miningApy: ComputedRef<any> = computed(() => store.miningApy);
+const tickers: ComputedRef<ITickers> = computed(() => store.tickers);
+const isReady = computed(() => store.ready);
 const isMobile = computed(() => windowSize.x.value < 576);
-const apy7d = computed(() => store.state.apy7d);
-const farmingAPY = computed<Array<IFarmingPool>>(() => store.state.farmingAPY);
+const apy7d = computed(() => store.apy7d);
+const farmingAPY = computed<Array<IFarmingPool>>(() => store.farmingAPY);
 /*async function updateAPY7d() {
   apy7d.value = await fetchAPY7Days();
 }
@@ -70,7 +68,7 @@ const paginationOptions = ref({
       return state.originalElement;
     }
 
-    return h(PaginationForTable, { page: state.page }, state.originalElement);
+    return h(PaginationForTable, { page: state.page }, () => state.originalElement);
   },
 });
 
@@ -320,7 +318,7 @@ watch(
         :dataSource="isMobile ? mobileData : data"
         :columns="isMobile ? mobileColumns : columns"
         :custom-row="customRow"
-        :rowClassName="(record, index) => 'table-pointer'"
+        :rowClassName="() => 'table-pointer'"
         :pagination="paginationOptions"
         @change="handleChange"
       >

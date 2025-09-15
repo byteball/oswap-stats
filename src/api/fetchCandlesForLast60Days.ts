@@ -1,7 +1,7 @@
 import axios from "axios";
-import { API_HOST } from "../../config";
+import { API_HOST } from "@/config";
 
-import { ICandles } from "@/interfaces/candles.inerface";
+import type { ICandles } from "@/interfaces/candles.inerface";
 
 export default async function fetchCandlesForLast60Days(
   full_market_name: string

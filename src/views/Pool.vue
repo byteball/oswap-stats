@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, ref, watch, onMounted, Ref, onUnmounted, h, nextTick } from "vue";
-import { useStore } from "vuex";
+import { computed, ref, watch, onMounted, type Ref, onUnmounted, h, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useMainStore } from "@/stores/main";
 import { createChart } from "lightweight-charts";
 import { DateTime } from "luxon";
 import { getVolumeInUSDHelper } from "@/helpers/volumeInUSD.helper";
@@ -9,8 +9,8 @@ import Pool from "@/helpers/PoolHelper";
 import fetchCandlesForLast60Days from "@/api/fetchCandlesForLast60Days";
 import fetchBalancesForLast60Days from "@/api/fetchBalancesForLast60Days";
 import fetchAAHistory from "@/api/fetchAAHistory";
-import { ICandles } from "@/interfaces/candles.inerface";
-import { IHistory } from "@/interfaces/poolHistory.interface";
+import type { ICandles } from "@/interfaces/candles.inerface";
+import type { IHistory } from "@/interfaces/poolHistory.interface";
 import Menu from "@/components/Menu.vue";
 import AssetIcon from "@/components/AssetIcon.vue";
 import PaginationForTable from "@/components/PaginationForTable.vue";
@@ -19,9 +19,9 @@ import { addZero } from "@/helpers/date.helper";
 import setTitle from "@/helpers/setTitle";
 
 import { InfoCircleOutlined, FilterOutlined } from "@ant-design/icons-vue";
-import { IFarmingPool } from "@/api/fetchFarmingAPY";
+import type { IFarmingPool } from "@/api/fetchFarmingAPY";
 
-const store = useStore();
+const store = useMainStore();
 const route = useRoute();
 const router = useRouter();
 const windowSize = useWindowSize();
@@ -35,14 +35,14 @@ interface ITypeMap {
   [key: string]: string;
 }
 
-store.dispatch("initIfNotInit");
-const exchangeRates = computed(() => store.state.exchangeRates);
-const isReady = computed(() => store.state.ready);
-const poolsData = computed(() => store.state.poolsData);
-const tickers = computed(() => store.state.tickers);
-const apy7d = computed(() => store.state.apy7d);
-const farmingAPY = computed<Array<IFarmingPool>>(() => store.state.farmingAPY);
-const miningApy = computed(() => store.state.miningApy);
+store.initIfNotInit();
+const exchangeRates = computed(() => store.exchangeRates);
+const isReady = computed(() => store.ready);
+const poolsData = computed(() => store.poolsData);
+const tickers = computed(() => store.tickers);
+const apy7d = computed(() => store.apy7d);
+const farmingAPY = computed<Array<IFarmingPool>>(() => store.farmingAPY);
+const miningApy = computed(() => store.miningApy);
 const isMobile = computed(() => windowSize.x.value < 576);
 const pool: Ref<Pool> = ref({} as Pool);
 const candles: Ref<ICandles[]> = ref([]);
@@ -58,7 +58,6 @@ const basePricesForChat = ref([]) as Ref<IForChart[]>;
 const quotePricesForChat = ref([]) as Ref<IForChart[]>;
 const currentChart = ref(1);
 const apyDetailsShown = ref(false);
-const filteredInfo = ref();
 
 let mousePosition = { x: 0, y: 0 };
 
@@ -466,7 +465,7 @@ function itemRender(state: any) {
     return state.originalElement;
   }
 
-  return h(PaginationForTable, { page: state.page }, state.originalElement);
+  return h(PaginationForTable, { page: state.page }, () => state.originalElement);
 }
 
 async function setDataFromQuery() {
@@ -811,10 +810,10 @@ onUnmounted(() => {
               </a-row>
             </div>
             <div
-              :ref="(el) => (blockWithChart = el)"
+              :ref="(el: any) => (blockWithChart = el)"
               style="padding: 0 16px 21px"
             >
-              <div :ref="(el) => (chart = el)"></div>
+              <div :ref="(el: any) => (chart = el)"></div>
             </div>
           </div>
         </a-col>
@@ -835,7 +834,7 @@ onUnmounted(() => {
         class="table"
         :dataSource="data"
         :columns="columns"
-        :rowClassName="(record, index) => 'table-pointer'"
+        :rowClassName="() => 'table-pointer'"
         :scroll="{ x: true }"
         :pagination="{ current: paginationPage, onChange: (page: any) => onPageChange(page), itemRender }"
       >

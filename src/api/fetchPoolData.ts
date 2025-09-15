@@ -1,8 +1,8 @@
-import { IExchangeRates } from "@/obyte";
+import type { IExchangeRates } from "@/obyte";
 import Pool from "@/helpers/PoolHelper";
-import { IState } from "@/interfaces/aa.interface";
-import { IDecimals } from "@/interfaces/decimals.interface";
-import { IAssetsList } from "@/interfaces/assets.interface";
+import type { IState } from "@/interfaces/aa.interface";
+import type { IDecimals } from "@/interfaces/decimals.interface";
+import type { IAssetsList } from "@/interfaces/assets.interface";
 
 export interface IPool {
   asset: string;

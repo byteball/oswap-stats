@@ -1,5 +1,5 @@
 import fetchAAStateVars from "@/api/fetchAAStateVars";
-import { IState } from "@/interfaces/aa.interface";
+import type { IState } from "@/interfaces/aa.interface";
 
 const factoryAAs = ["OQLU4HOAIVJ32SDVBJA6AKD52OVTHAOF", "MODBFVX2J2TRPQUK7XFTFQK73AB64NF3"];
 

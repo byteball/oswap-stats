@@ -1,7 +1,7 @@
 import axios from "axios";
-import { API_HOST } from "../../config";
+import { API_HOST } from "@/config";
 
-import { ITickers } from "@/interfaces/tickers.interface";
+import type { ITickers } from "@/interfaces/tickers.interface";
 
 export default async function fetchAAHistory(
   poolAddress: string,
